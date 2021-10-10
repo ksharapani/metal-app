@@ -1,9 +1,7 @@
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from django.db.models import Count, F
-from django.utils.timezone import datetime
 
-from metal.models import Metal, Value
+from metal.models import Value
 
 
 class MetalPrice(APIView):
