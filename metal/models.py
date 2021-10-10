@@ -5,7 +5,7 @@ class Metal(models.Model):
     objects = None
 
     metal_name = models.CharField(max_length=512)
-    created_at = models.DateField(auto_created=True)
+    created_at = models.DateField(auto_now_add=True)
     updated_at = models.DateField(auto_now=True)
 
     def __str__(self):
@@ -17,8 +17,8 @@ class Value(models.Model):
 
     value = models.FloatField()
     metal = models.ForeignKey(Metal, on_delete=models.CASCADE)
-    created_at = models.DateField(auto_created=True)
+    created_at = models.DateField(auto_now_add=True)
     updated_at = models.DateField(auto_now=True)
 
     def __str__(self):
-        return self.value
+        return str(self.value)
