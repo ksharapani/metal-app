@@ -1,3 +1,4 @@
+import pandas as pd
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
@@ -21,25 +22,29 @@ class MetalPrice(APIView):
 
         result_set = []
         for metal_name in metal_names:
-            data = Value.objects.filter(metal__metal_name=metal_name, updated_at__range=(date_from, date_to)).\
-                order_by('updated_at')
-
             price_list = []
-            for i in range(1, len(data)):
-                different = data[i].updated_at - data[i - 1].updated_at
-                hours = divmod(different.total_seconds(), 3600)[0]
+            data = Value.objects.values('updated_at', 'value').\
+                filter(metal__metal_name=metal_name, updated_at__range=(date_from, date_to)). \
+                order_by('updated_at')
+            if frequency == 'hourly':
+                for d in data:
+                    price_list.append({"Price": d.value, "Updated at": str(d.updated_at)})
 
-                if frequency == 'hourly':
-                    if hours >= 0:
-                        price_list.append({"Price": data[i].value, "Updated at": str(data[i].updated_at)})
-                elif frequency == 'daily':
-                    if hours >= 24:
-                        price_list.append({"Price": data[i].value, "Updated at": str(data[i].updated_at)})
-                elif frequency == '7 days':
-                    if hours >= 168:
-                        price_list.append({"Price": data[i].value, "Updated at": str(data[i].updated_at)})
-                else:
-                    price_list.append({"Price": data[i].value, "Updated at": str(data[i].updated_at)})
+            elif frequency == 'daily':
+                if data:
+                    data_frame = pd.DataFrame(list(data))
+                    mean = data_frame.groupby([data_frame['updated_at'].dt.date])['value'].mean()
+
+                    for index, value in mean.items():
+                        price_list.append({"Price": value, "Updated at": index})
+
+            elif frequency == '7 days':
+                if data:
+                    data_frame = pd.DataFrame(list(data))
+                    mean = data_frame.resample('W-Mon', on='updated_at').mean()
+
+                    for index, value in mean.iterrows():
+                        price_list.append({"Price": value[0], "Updated at": index})
 
             result_set.append({metal_name: {"Data": price_list}})
 
