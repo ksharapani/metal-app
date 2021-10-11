@@ -26,7 +26,7 @@ SECRET_KEY = 'h6a(p7j_1-f-khbj8br1^ih2gjzm!1s*(26ji%de_w2g8#n9kv'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['metalapplication.herokuapp.com', 'localhost']
+ALLOWED_HOSTS = ['metalapplication.herokuapp.com' 'localhost']
 
 
 # Application definition
@@ -81,21 +81,6 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-
-in_heroku = False
-if 'DATABASE_URL' in os.environ:
-    in_heroku = True
-
-import dj_database_url
-if in_heroku:
-    DATABASES = {'default': dj_database_url.config()}
-else:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-        }
-    }
 
 
 # Password validation
