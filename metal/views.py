@@ -28,7 +28,7 @@ class MetalPrice(APIView):
                 order_by('updated_at')
             if frequency == 'hourly':
                 for d in data:
-                    price_list.append({"Price": d.value, "Updated at": str(d.updated_at)})
+                    price_list.append({"Price": d['value'], "Updated at": str(d['updated_at'])})
 
             elif frequency == 'daily':
                 if data:
